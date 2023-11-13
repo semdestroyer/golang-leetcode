@@ -6,42 +6,37 @@ import (
 )
 
 func main() {
+	fmt.Println(13 / 5)
 	fmt.Println(evalRPN([]string{"2", "1", "+", "3", "*"}))
 	fmt.Println(evalRPN([]string{"4", "13", "5", "/", "+"}))
 	fmt.Println(evalRPN([]string{"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"}))
 }
 
 func evalRPN(tokens []string) int {
-	numbers := make([]int, 0)
-	//res := 0
-	res, _ := strconv.Atoi(tokens[0])
-	tokens = tokens[1:]
-	for _, token := range tokens {
-		fmt.Println(numbers)
-		val, err := strconv.Atoi(token)
-		//	fmt.Println(val, " ", err)
+	stack := make([]int, 0)
+	for i := range tokens {
+		val, err := strconv.Atoi(tokens[i])
 		if err != nil {
-			switch token {
+			term1 := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			term2 := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			switch tokens[i] {
 			case "+":
-				term := numbers[0]
-				numbers = numbers[1:]
-				res += term
+				stack = append(stack, term1+term2)
 			case "-":
-				term := numbers[0]
-				numbers = numbers[1:]
-				res -= term
+				stack = append(stack, term1-term2)
 			case "*":
-				term := numbers[0]
-				numbers = numbers[1:]
-				res *= term
+				stack = append(stack, term1*term2)
 			case "/":
-				term := numbers[0]
-				numbers = numbers[1:]
-				res /= term
+				stack = append(stack, term2/term1)
 			}
+
 		} else {
-			numbers = append(numbers, val)
+			stack = append(stack, val)
 		}
+		fmt.Println(stack)
 	}
+	res := stack[0]
 	return res
 }
